@@ -1,0 +1,127 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <NewPing.h>
+#include <time.h>
+
+// WiFi Credentials
+const char* ssid = "12345678";
+const char* password = "12345678";
+
+// Google Apps Script Web App URL
+const char* serverName = "https://script.google.com/macros/s/AKfycbzsrnszbBCJ9oQfaXKs3zOaAabK0fh9cR-aNxlPwZVmbehEDyUScrEETrfY2EfzvS2q/exec";
+
+// SR04M Ultrasonic Sensor Pin Definitions
+#define TRIG_PIN 16
+#define ECHO_PIN 17
+#define MAX_DISTANCE_CM 200
+
+// Pipe/Container Dimensions
+const float PIPE_HEIGHT_CM = 28.0;
+
+// NewPing object
+NewPing sonar(TRIG_PIN, ECHO_PIN, MAX_DISTANCE_CM);
+
+// NTP Server Configuration
+const char* ntpServer = "pool.ntp.org";
+const long gmtOffset_sec = 19800;
+const int daylightOffset_sec = 0;
+
+void setup() {
+  Serial.begin(115200);
+
+  // Connect to WiFi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+  }
+  Serial.println("WiFi connected");
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
+
+  // Initialize and synchronize NTP time
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+  time_t now = 0;
+  struct tm timeinfo;
+  int retryCount = 0;
+  const int maxRetries = 10;
+
+  while (now < 1000000000 && retryCount < maxRetries) {
+    delay(500);
+    now = time(nullptr);
+    getLocalTime(&timeinfo);
+    retryCount++;
+  }
+  
+  if (now < 1000000000) {
+    Serial.println("Failed to obtain time from NTP server.");
+  } else {
+    Serial.println("Time synchronized.");
+    Serial.print("Current time: ");
+    Serial.println(asctime(&timeinfo));
+  }
+}
+
+void loop() {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+
+    // Get Current Timestamp
+    time_t now = time(nullptr);
+    struct tm timeinfo;
+    char timestampStr[64];
+
+    if (now < 1000000000) {
+      sprintf(timestampStr, "Unsynced_%lu", millis());
+    } else {
+      getLocalTime(&timeinfo);
+      strftime(timestampStr, sizeof(timestampStr), "%Y-%m-%d %H:%M:%S", &timeinfo);
+    }
+
+    // Read Distance from SR04M Sensor
+    unsigned int distanceCm = sonar.ping_cm();
+    if (distanceCm == 0) {
+      distanceCm = MAX_DISTANCE_CM;
+    }
+
+    // Calculate Water Level
+    float waterLevelCm = PIPE_HEIGHT_CM - distanceCm;
+    waterLevelCm = constrain(waterLevelCm, 0, PIPE_HEIGHT_CM);
+
+    Serial.print("Distance: ");
+    Serial.print(distanceCm);
+    Serial.print(" cm, Water Level: ");
+    Serial.print(waterLevelCm);
+    Serial.println(" cm");
+    Serial.print("Timestamp: ");
+    Serial.println(timestampStr);
+
+    // Prepare JSON Data to Send
+    String jsonData = "{\"timestamp\": \"" + String(timestampStr) + "\"" +
+                      ", \"distanceCm\": " + String(distanceCm) +
+                      ", \"waterLevelCm\": " + String(waterLevelCm, 2) +
+                      "}";
+
+    // Send HTTP POST Request
+    http.begin(serverName);
+    http.addHeader("Content-Type", "application/json");
+    int httpResponseCode = http.POST(jsonData);
+
+    // Handle HTTP Response
+    if (httpResponseCode > 0) {
+      String response = http.getString();
+      Serial.print("HTTP Response Code: ");
+      Serial.println(httpResponseCode);
+      Serial.print("HTTP Response: ");
+      Serial.println(response);
+    } else {
+      Serial.print("HTTP Error code: ");
+      Serial.println(httpResponseCode);
+    }
+    http.end();
+  } else {
+    Serial.println("WiFi Disconnected. Attempting to reconnect...");
+    WiFi.reconnect();
+  }
+
+  delay(10000); // Send data every 10 seconds
+}
