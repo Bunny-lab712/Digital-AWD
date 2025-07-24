@@ -4,11 +4,11 @@
 #include <time.h>
 
 // WiFi Credentials
-const char* ssid = "12345678";
-const char* password = "12345678";
+const char* ssid = "";
+const char* password = "";
 
 // Google Apps Script Web App URL
-const char* serverName = "https://script.google.com/macros/s/AKfycbzsrnszbBCJ9oQfaXKs3zOaAabK0fh9cR-aNxlPwZVmbehEDyUScrEETrfY2EfzvS2q/exec";
+const char* serverName = "";
 
 // SR04M Ultrasonic Sensor Pin Definitions
 #define TRIG_PIN 16
