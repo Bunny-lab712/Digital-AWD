@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital AWD System - Interactive Report V3</title>
+    <title>Digital AWD System - Interactive Report V2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -129,15 +129,6 @@
             text-decoration: none;
             cursor: pointer;
         }
-        .version-button {
-            transition: background-color 0.3s, color 0.3s;
-            background-color: #E5E7EB; /* Gray-200 */
-            color: #4B5563; /* Gray-700 */
-        }
-        .version-button.active {
-            background-color: #4A7C59; /* Earthy Green */
-            color: white;
-        }
     </style>
 </head>
 <body class="antialiased">
@@ -153,11 +144,10 @@
     <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
         <nav class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
-                <h1 id="main-title" class="text-xl font-bold text-gray-800">Digital AWD System V3</h1>
-                <div class="hidden md:flex items-center space-x-4">
-                    <button id="v1-button" class="version-button py-2 px-4 rounded-full text-sm font-semibold">Version 1</button>
-                    <button id="v2-button" class="version-button py-2 px-4 rounded-full text-sm font-semibold">Version 2</button>
-                    <button id="v3-button" class="version-button py-2 px-4 rounded-full text-sm font-semibold active">Version 3</button>
+                <h1 id="main-title" class="text-xl font-bold text-gray-800">Digital AWD System V2</h1>
+                <div class="hidden md:flex items-center space-x-8">
+                    <button id="v1-button" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-full text-sm font-semibold hover:bg-gray-300 transition-colors">Version 1</button>
+                    <button id="v2-button" class="bg-gray-200 text-gray-800 py-2 px-4 rounded-full text-sm font-semibold hover:bg-gray-300 transition-colors hidden">Version 2</button>
                     <a href="#dashboard" class="nav-link active">Dashboard</a>
                     <a href="#system" class="nav-link">System Deep Dive</a>
                     <a href="#impact" class="nav-link">Impact</a>
@@ -230,9 +220,73 @@
                     <button class="tab-button py-2 px-6 font-semibold border-b-2" data-tab="flow">Data Flow</button>
                 </div>
 
-                <div id="hardware" class="tab-content"></div>
-                <div id="software" class="tab-content hidden"></div>
-                <div id="flow" class="tab-content hidden p-4"></div>
+                <div id="hardware" class="tab-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="p-4 border rounded-lg bg-gray-50"><strong>Controller:</strong> ESP32 (38-pin)</div>
+                        <div class="p-4 border rounded-lg bg-gray-50"><strong>Sensing:</strong> AJ-SR04M Ultrasonic Sensor</div>
+                        <div class="p-4 border rounded-lg bg-gray-50"><strong>Connectivity:</strong> WiFi & Quectel EC220U-CN (GSM)</div>
+                        <div class="p-4 border rounded-lg bg-gray-50"><strong>Data Backup:</strong> 32 GB SD Card</div>
+                        <div class="p-4 border rounded-lg bg-gray-50"><strong>Timekeeping:</strong> RTC DS3231 Module</div>
+                        <div class="p-4 border rounded-lg bg-gray-50"><strong>Power:</strong> Solar Panels & 3x Li-ion Batteries</div>
+                    </div>
+                </div>
+
+                <div id="software" class="tab-content hidden">
+                    <p class="mb-4">The system runs on custom firmware for the ESP32 and a Google Apps Script for cloud integration.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold mb-2">ESP32 Firmware</h4>
+                            <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto"><code>// Key Functionality
+void loop() {
+  // 1. Check network connectivity
+  // 2. Read sensor data (median of 5)
+  // 3. Get timestamp from RTC
+  // 4. Prepare JSON payload
+  // 5. Try to send via WiFi/GSM
+  // 6. If send fails, save to SD card
+  delay(120000); // Wait 2 minutes
+}</code></pre>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-2">Google Apps Script</h4>
+                            <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto"><code>// Key Functionality
+function doPost(e) {
+  // 1. Parse incoming JSON data
+  // 2. Get active spreadsheet
+  // 3. Append data as a new row
+  // 4. Apply color coding based on status
+  // 5. Return success/error response
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="flow" class="tab-content hidden p-4">
+                     <div class="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-4 items-center font-mono text-sm">
+                        <div class="diagram-box">Ultrasonic Sensor (AJ-SR04M)</div>
+                        <div class="text-center diagram-arrow">→</div>
+                        <div class="diagram-box row-start-2 md:row-start-1 md:col-start-3">ESP32 (Controller)</div>
+                        
+                        <div class="col-span-1 md:col-span-3 text-center diagram-arrow">↓</div>
+                        
+                        <div class="diagram-box md:col-start-3">RTC DS3231</div>
+                         <div class="text-center diagram-arrow md:col-start-2">↑</div>
+                        <div class="diagram-box md:col-start-1">SD Card (32GB Backup)</div>
+                        
+                        <div class="col-span-1 md:col-span-3 text-center diagram-arrow">↓</div>
+                        
+                        <div class="diagram-box md:col-start-3">WiFi / GSM Module</div>
+                        
+                        <div class="col-span-1 md:col-span-3 text-center diagram-arrow">↓</div>
+
+                        <div class="diagram-box md:col-start-2">Google Sheets (Cloud)</div>
+                        
+                        <div class="col-span-1 md:col-span-3 text-center diagram-arrow">↓</div>
+                        
+                        <div class="diagram-box md:col-start-2">Farmer Alerts (App)</div>
+
+                     </div>
+                </div>
             </div>
         </section>
 
@@ -281,7 +335,7 @@
              <div class="bg-white p-6 rounded-lg shadow-lg">
                 <ul class="list-disc list-inside space-y-2">
                     <li>International Rice Research Institute (IRRI) – AWD methodology.</li>
-                    <li>Quectel EC200U-CN GSM Datasheet.</li>
+                    <li>Quectel EC220U-CN GSM Datasheet.</li>
                     <li>Espressif ESP32 Developer Documentation.</li>
                     <li>NewPing Arduino Library for Ultrasonic sensor control.</li>
                     <li>ArduinoJson & Google Apps Script Developer Guides.</li>
@@ -300,16 +354,18 @@
 document.addEventListener('DOMContentLoaded', function () {
     const PIPE_HEIGHT_CM = 55.0;
     
-    // Apps Script URLs
-    const V1_APPS_SCRIPT_URL = 'YOUR_VERSION_1_APPS_SCRIPT_URL_HERE';
+    // Version 2 Apps Script URL
     const V2_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyWm9xovHIdtKInQeWJki6KFEnWUKH9EGSzrQtE6Fd8kVeWhQalR9phkxMVU_D204V4/exec';
-    const V3_APPS_SCRIPT_URL = 'YOUR_VERSION_3_APPS_SCRIPT_URL_HERE';
     
-    let currentVersion = 'V3';
+    // Version 1 Apps Script URL - Please provide your URL here.
+    const V1_APPS_SCRIPT_URL = 'YOUR_VERSION_1_APPS_SCRIPT_URL_HERE';
+    
+    let currentVersion = 'V2';
     let fetchInterval;
 
     const mainTitle = document.getElementById('main-title');
-    const versionButtons = document.querySelectorAll('.version-button');
+    const v1Button = document.getElementById('v1-button');
+    const v2Button = document.getElementById('v2-button');
     const navLinks = document.querySelectorAll('.nav-link');
     const sections = document.querySelectorAll('main section');
     const simulateButton = document.getElementById('simulate-button');
@@ -324,170 +380,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let trendLabels = Array.from({ length: 12 }, (_, i) => `${12 - i}h ago`).reverse();
     let trendData = Array.from({ length: 12 }, () => null);
     
-    // System Deep Dive Content for each version
-    const systemContent = {
-        'V1': {
-            hardware: `
-                <p class="mb-4">This version is a single-point monitoring system designed for small-scale pilot projects.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="p-4 border rounded-lg bg-gray-50"><strong>Single Unit:</strong> One ESP32 with an Ultrasonic Sensor.</div>
-                    <div class="p-4 border rounded-lg bg-gray-50"><strong>Connectivity:</strong> Uses WiFi for cloud connectivity.</div>
-                    <div class="p-4 border rounded-lg bg-gray-50"><strong>Data Backup:</strong> No local data backup. Data is lost if network fails.</div>
-                    <div class="p-4 border rounded-lg bg-gray-50"><strong>Power:</strong> Powered by a standard USB battery pack.</div>
-                </div>
-            `,
-            software: `
-                <p class="mb-4">The firmware for V1 is a simple script that reads a sensor and sends data to the cloud via WiFi.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h4 class="font-semibold mb-2">Firmware (Simplified)</h4>
-                        <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto"><code>// Key Functionality
-void loop() {
-  // 1. Read sensor data
-  // 2. Calculate water level
-  // 3. Send payload via WiFi to Google Sheet
-  delay(30000); // Wait 30 seconds
-}</code></pre>
-                    </div>
-                </div>
-            `,
-            flow: `
-                <div class="grid grid-cols-1 md:grid-cols-1 gap-y-4 items-center font-mono text-xs md:text-sm">
-                    <div class="diagram-box inline-block">ESP32 (with Ultrasonic Sensor)</div>
-                    <div class="text-center text-gray-500 text-2xl leading-none md:text-4xl">↓</div>
-                    <div class="diagram-box inline-block">WiFi Module</div>
-                    <div class="text-center text-gray-500 text-2xl leading-none md:text-4xl">↓</div>
-                    <div class="diagram-box inline-block">Google Sheets (Cloud)</div>
-                    <div class="text-center text-gray-500 text-2xl leading-none md:text-4xl">↓</div>
-                    <div class="diagram-box inline-block">Farmer Alerts (App)</div>
-                </div>
-            `
-        },
-        'V2': {
-            hardware: `
-                <p class="mb-4">Version 2 introduces GSM connectivity and a local data backup for improved resilience.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="p-4 border rounded-lg bg-gray-50"><strong>Single Unit:</strong> One ESP32 with an Ultrasonic Sensor.</div>
-                    <div class="p-4 border rounded-lg bg-gray-50"><strong>Connectivity:</strong> Uses WiFi first, with GSM (Quectel EC200U-CN) as a fallback.</div>
-                    <div class="p-4 border rounded-lg bg-gray-50"><strong>Data Backup:</strong> SD Card for offline storage when both WiFi and GSM fail.</div>
-                    <div class="p-4 border rounded-lg bg-gray-50"><strong>Power:</strong> Solar-powered with a battery backup.</div>
-                </div>
-            `,
-            software: `
-                <p class="mb-4">The firmware for V2 includes logic to handle multiple network connections and local data storage.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h4 class="font-semibold mb-2">Firmware (Simplified)</h4>
-                        <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto"><code>// Key Functionality
-void loop() {
-  // 1. Read sensor data
-  // 2. Calculate water level
-  // 3. Try sending via WiFi
-  // 4. If WiFi fails, try via GSM
-  // 5. If both fail, save to SD card
-  delay(30000); // Wait 30 seconds
-}</code></pre>
-                    </div>
-                </div>
-            `,
-            flow: `
-                <div class="grid grid-cols-1 md:grid-cols-1 gap-y-4 items-center font-mono text-xs md:text-sm">
-                    <div class="diagram-box inline-block">ESP32 (with Ultrasonic Sensor)</div>
-                    <div class="text-center text-gray-500 text-2xl leading-none md:text-4xl">↓</div>
-                    <div class="diagram-box inline-block">WiFi / GSM Module</div>
-                    <div class="text-center text-gray-500 text-2xl leading-none md:text-4xl">↓</div>
-                    <div class="diagram-box inline-block">SD Card (Local Backup)</div>
-                    <div class="text-center text-gray-500 text-2xl leading-none md:text-4xl">↓</div>
-                    <div class="diagram-box inline-block">Google Sheets (Cloud)</div>
-                    <div class="text-center text-gray-500 text-2xl leading-none md:text-4xl">↓</div>
-                    <div class="diagram-box inline-block">Farmer Alerts (App)</div>
-                </div>
-            `
-        },
-        'V3': {
-            hardware: `
-                <p class="mb-4">This version uses a multi-point network of transmitters and a single receiver gateway to cover larger farming areas.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="p-4 border rounded-lg bg-gray-50"><strong>Transmitters:</strong> 5 units with Ultrasonic Sensors and LoRa E220 modules (3x T22D, 2x T30D).</div>
-                    <div class="p-4 border rounded-lg bg-gray-50"><strong>Receiver Gateway:</strong> Single ESP32 with WiFi and GSM (Quectel EC200U-CN) for cloud connectivity.</div>
-                    <div class="p-4 border rounded-lg bg-gray-50"><strong>Data Backup:</strong> SD Card at the gateway for offline storage.</div>
-                    <div class="p-4 border rounded-lg bg-gray-50"><strong>Power:</strong> Each transmitter and the gateway are solar-powered with battery backups.</div>
-                </div>
-            `,
-            software: `
-                <p class="mb-4">The system's firmware manages LoRa communication at the transmitter and the multi-network upload at the gateway.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h4 class="font-semibold mb-2">LoRa Transmitter Firmware</h4>
-                        <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto"><code>// Key Functionality
-void loop() {
-  // 1. Read sensor data (median of 5)
-  // 2. Calculate water level
-  // 3. Create payload (device|distance|waterLevel)
-  // 4. Send payload via LoRa
-  delay(12000); // Wait 12 seconds
-}</code></pre>
-                    </div>
-                    <div>
-                        <h4 class="font-semibold mb-2">LoRa Receiver Gateway Firmware</h4>
-                        <pre class="bg-gray-900 text-white p-4 rounded-lg text-xs overflow-x-auto"><code>// Key Functionality
-void loop() {
-  // 1. Listen for incoming LoRa data
-  // 2. If data received:
-  //    a. Parse payload (device, level, etc.)
-  //    b. Prepare JSON payload
-  //    c. Try to send via WiFi
-  //    d. If WiFi fails, try via GSM
-  //    e. If both fail, save to SD card
-  // 3. Periodically check SD card for unsent data
-  // 4. Flush SD card buffer when network is available
-}</code></pre>
-                    </div>
-                </div>
-            `,
-            flow: `
-                <div class="grid grid-cols-5 md:grid-cols-5 gap-x-2 md:gap-x-4 gap-y-4 items-center font-mono text-xs md:text-sm">
-                    <!-- Transmitters -->
-                    <div class="diagram-box">Transmitter 1 (LoRa T22D)</div>
-                    <div class="diagram-box">Transmitter 2 (LoRa T22D)</div>
-                    <div class="diagram-box">Transmitter 3 (LoRa T22D)</div>
-                    <div class="diagram-box">Transmitter 4 (LoRa T30D)</div>
-                    <div class="diagram-box">Transmitter 5 (LoRa T30D)</div>
-                    
-                    <!-- Arrows converging to gateway -->
-                    <div class="col-span-5 text-center text-gray-500 text-2xl leading-none md:text-4xl">↓ ↓ ↓ ↓ ↓</div>
-                    
-                    <!-- Gateway -->
-                    <div class="col-span-5 md:col-span-5 text-center">
-                        <div class="diagram-box inline-block">Receiver Gateway (ESP32)</div>
-                    </div>
-
-                    <!-- Single vertical flow from gateway -->
-                    <div class="col-span-5 text-center text-gray-500 text-2xl leading-none md:text-4xl">↓</div>
-                    
-                    <div class="col-span-5 text-center">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="diagram-box">WiFi / GSM Module</div>
-                            <div class="diagram-box">SD Card (Local Backup)</div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-span-5 text-center text-gray-500 text-2xl leading-none md:text-4xl">↓</div>
-                    
-                    <div class="col-span-5 text-center">
-                        <div class="diagram-box inline-block">Google Sheets (Cloud)</div>
-                    </div>
-                    
-                    <div class="col-span-5 text-center text-gray-500 text-2xl leading-none md:text-4xl">↓</div>
-                    
-                    <div class="col-span-5 text-center">
-                        <div class="diagram-box inline-block">Farmer Alerts (App)</div>
-                    </div>
-                </div>
-            `
-        }
-    };
-
     function initializeTrendChart() {
         if (trendChart) {
             trendChart.destroy();
@@ -605,22 +497,12 @@ void loop() {
 
     async function fetchData() {
         try {
-            let url;
-            switch (currentVersion) {
-                case 'V1':
-                    updateDashboardWithStaticV1Data();
-                    return;
-                case 'V2':
-                    url = V2_APPS_SCRIPT_URL;
-                    break;
-                case 'V3':
-                    // Check if V3 URL is a placeholder
-                    if (V3_APPS_SCRIPT_URL.startsWith('YOUR_')) {
-                         updateDashboardWithStaticV3Data();
-                         return;
-                    }
-                    url = V3_APPS_SCRIPT_URL;
-                    break;
+            const url = currentVersion === 'V2' ? V2_APPS_SCRIPT_URL : V1_APPS_SCRIPT_URL;
+
+            // Handle V1 static data display
+            if (currentVersion === 'V1') {
+                updateDashboardWithStaticData();
+                return;
             }
 
             const response = await fetch(url);
@@ -645,7 +527,8 @@ void loop() {
         }
     }
     
-    function updateDashboardWithStaticV1Data() {
+    // Function to update the dashboard with static V1 data
+    function updateDashboardWithStaticData() {
         updateGauge(12.5);
         document.getElementById('connectivity-status').textContent = 'Offline (Static)';
         document.getElementById('backup-size').textContent = '1.2 KB';
@@ -656,31 +539,8 @@ void loop() {
         trendChart.data.datasets[0].data = trendData;
         trendChart.update();
     }
-    
-    function updateDashboardWithStaticV2Data() {
-        updateGauge(15.2);
-        document.getElementById('connectivity-status').textContent = 'Offline (Static)';
-        document.getElementById('backup-size').textContent = '0.7 KB';
-        document.getElementById('last-sync').textContent = 'N/A';
-        trendData = [14.0, 15.5, 16.0, 15.2, 14.8, 15.0, 15.8, 16.1, 15.7, 15.4, 15.6, 15.2];
-        trendLabels = Array.from({ length: 12 }, (_, i) => `${12 - i}h ago`).reverse();
-        trendChart.data.labels = trendLabels;
-        trendChart.data.datasets[0].data = trendData;
-        trendChart.update();
-    }
 
-    function updateDashboardWithStaticV3Data() {
-        updateGauge(19.8);
-        document.getElementById('connectivity-status').textContent = 'Offline (Static)';
-        document.getElementById('backup-size').textContent = '0.9 KB';
-        document.getElementById('last-sync').textContent = 'N/A';
-        trendData = [18.2, 19.5, 20.0, 19.8, 19.0, 18.8, 19.1, 19.3, 19.8, 20.1, 19.5, 19.8];
-        trendLabels = Array.from({ length: 12 }, (_, i) => `${12 - i}h ago`).reverse();
-        trendChart.data.labels = trendLabels;
-        trendChart.data.datasets[0].data = trendData;
-        trendChart.update();
-    }
-
+    // Function to simulate data updates
     function simulateData() {
         const simulatedWaterLevel = (Math.random() * 20) + 1; // Random level between 1 and 21
         const now = new Date();
@@ -702,27 +562,11 @@ void loop() {
         showModal('Simulation running with new data!');
         setTimeout(hideModal, 2000); // Hide after 2 seconds
     }
-
-    function updateSystemDeepDive(version) {
-        const content = systemContent[version];
-        if (content) {
-            document.getElementById('hardware').innerHTML = content.hardware;
-            document.getElementById('software').innerHTML = content.software;
-            document.getElementById('flow').innerHTML = content.flow;
-        }
-    }
     
     // Function to handle version change
     function toggleVersion(version) {
         if (currentVersion === version) return;
         currentVersion = version;
-        
-        // Update title
-        mainTitle.textContent = `Digital AWD System ${version}`;
-        
-        // Update button active state
-        versionButtons.forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`${version.toLowerCase()}-button`).classList.add('active');
         
         // Clear existing interval
         if (fetchInterval) {
@@ -730,16 +574,18 @@ void loop() {
         }
 
         if (currentVersion === 'V1') {
-            updateDashboardWithStaticV1Data();
-        } else if (currentVersion === 'V2') {
+            mainTitle.textContent = 'Digital AWD System V1';
+            v1Button.classList.add('hidden');
+            v2Button.classList.remove('hidden');
+            updateDashboardWithStaticData();
+        } else {
+            mainTitle.textContent = 'Digital AWD System V2';
+            v1Button.classList.remove('hidden');
+            v2Button.classList.add('hidden');
             fetchData();
             fetchInterval = setInterval(fetchData, 30000);
-        } else if (currentVersion === 'V3') {
-            updateDashboardWithStaticV3Data();
         }
         
-        updateSystemDeepDive(currentVersion);
-
         showModal(`Switched to Version ${currentVersion} Dashboard.`);
         setTimeout(hideModal, 2000); // Hide after 2 seconds
     }
@@ -786,13 +632,8 @@ void loop() {
         });
     });
 
-    versionButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Correctly get the version string from the button's ID
-            const versionString = button.id.split('-')[0].toUpperCase();
-            toggleVersion(versionString);
-        });
-    });
+    v1Button.addEventListener('click', () => toggleVersion('V1'));
+    v2Button.addEventListener('click', () => toggleVersion('V2'));
 
     closeButton.addEventListener('click', hideModal);
 
@@ -808,10 +649,8 @@ void loop() {
     initializeTrendChart();
     initializeImpactChart();
     
-    // Initial setup for V3 dashboard
-    toggleVersion('V3');
+    // Initial setup for V2 dashboard
+    toggleVersion('V2');
 });
-</script>
+</script
 
-</body>
-</html>
